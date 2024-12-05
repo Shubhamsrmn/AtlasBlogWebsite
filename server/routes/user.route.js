@@ -7,6 +7,7 @@ const {
   registerFun,
   loginFun,
   getProfileFun,
+  logoutFun,
 } = require("../controllers/user.controller");
 
 // Import authentication middleware
@@ -47,8 +48,12 @@ router.post(
   loginFun
 );
 
-// Get user profile (protected route)
-router.get("/profile", authUser, getProfileFun);
+// Apply authUser middleware to all routes below this line
+router.use(authUser);
+
+// Protected routes
+router.get("/logout", logoutFun);
+router.get("/profile", getProfileFun);
 
 // Export router
 module.exports = router;

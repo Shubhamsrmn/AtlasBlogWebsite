@@ -47,7 +47,10 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     { _id: this._id, email: this.email, firstName: this.fullName.firstName },
-    process.env.JWTSECRETKEY
+    process.env.JWTSECRETKEY,
+    {
+      expiresIn: process.env.JWTSECRETKEYEXPIRY,
+    }
   );
 };
 

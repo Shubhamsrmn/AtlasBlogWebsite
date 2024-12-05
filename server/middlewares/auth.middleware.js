@@ -1,5 +1,7 @@
 // middlewares/auth.middleware.js
 const UserModel = require("../models/user.model");
+const TokenModel = require("../models/blacklistedToken.model");
+
 const jwt = require("jsonwebtoken");
 const { sendResponse } = require("../utils/response.util");
 
@@ -9,9 +11,19 @@ const { sendResponse } = require("../utils/response.util");
 const authUser = async (req, res, next) => {
   try {
     // Extract token from Authorization header
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
     if (!token) {
       return sendResponse(res, 401, false, "Unauthorized: No token provided");
+    }
+
+    // check for logout token
+    const isBlacklistedToken = await TokenModel.findOne({
+      token: token,
+    });
+
+    //if token is from logout token then it is not valid
+    if (isBlacklistedToken) {
+      return sendResponse(res, 401, false, "Invalid token: User not found");
     }
 
     // Verify token

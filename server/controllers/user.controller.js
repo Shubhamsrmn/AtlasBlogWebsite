@@ -1,5 +1,6 @@
 // controllers/user.controller.js
 const UserModel = require("../models/user.model");
+const TokenModel = require("../models/blacklistedToken.model");
 const { validationResult } = require("express-validator");
 const { sendResponse } = require("../utils/response.util");
 
@@ -81,8 +82,27 @@ const loginFun = async (req, res) => {
     // Generate access token
     const token = user.generateAccessToken();
 
+    //Set Token to Cookies
+    res.cookie("token", token);
     // Respond with token
     return sendResponse(res, 200, true, "Login successful", { token });
+  } catch (error) {
+    // Handle server errors
+    return sendResponse(res, 500, false, "Internal Server Error", {
+      error: error.message,
+    });
+  }
+};
+/**
+ * Controller to handle user logout
+ */
+const logoutFun = async (req, res) => {
+  try {
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    await TokenModel.create({
+      token: token,
+    });
+    return sendResponse(res, 200, true, "Logout successful");
   } catch (error) {
     // Handle server errors
     return sendResponse(res, 500, false, "Internal Server Error", {
@@ -108,4 +128,4 @@ const getProfileFun = async (req, res) => {
   }
 };
 
-module.exports = { registerFun, loginFun, getProfileFun };
+module.exports = { registerFun, loginFun, logoutFun, getProfileFun };
