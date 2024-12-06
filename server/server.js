@@ -1,7 +1,7 @@
 // Import required modules
-const http = require("http");
-const app = require("./app"); // Application setup
-const connectDb = require("./db/index"); // Database connection
+import http from "http";
+import app from "./app.js"; // Application setup
+import connectDb from "./db/index.js"; // Database connection
 
 // Connect to the database
 connectDb();

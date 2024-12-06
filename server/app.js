@@ -1,11 +1,12 @@
 // Import required modules
-const express = require("express");
-const dotenv = require("dotenv");
-const cors = require("cors");
-const cookiesParser = require("cookie-parser");
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import cookiesParser from "cookie-parser";
 
 // Import routes
-const userRouter = require("./routes/user.route");
+import userRouter from "./routes/user.route.js";
+import captainRouter from "./routes/captain.route.js";
 
 // Load environment variables
 dotenv.config();
@@ -22,5 +23,7 @@ app.use(cookiesParser()); //Parse cookies so that we can add and read cookies
 // Set up routes
 app.use("/users", userRouter);
 
+app.use("/captains", captainRouter);
+
 // Export the configured app
-module.exports = app;
+export default app;

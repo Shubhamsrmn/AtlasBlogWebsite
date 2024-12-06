@@ -8,10 +8,14 @@
  * @param {string} message - Response message
  * @param {object} [data] - Optional data object
  */
-const sendResponse = (res, statusCode, success, message, data = null) => {
+export const sendResponse = (
+  res,
+  statusCode,
+  success,
+  message,
+  data = null
+) => {
   const response = { success, message };
   if (data) response.data = data;
   res.status(statusCode).json(response);
 };
-
-module.exports = { sendResponse };

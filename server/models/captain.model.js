@@ -1,10 +1,7 @@
-// Import required modules
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
-// Define the user schema
-const userSchema = new mongoose.Schema(
+const captainSchema = new mongoose.Schema(
   {
     fullName: {
       firstName: {
@@ -29,22 +26,55 @@ const userSchema = new mongoose.Schema(
       required: true,
       select: false, // Exclude password by default in queries
     },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "inactive",
+    },
+    vehicle: {
+      color: {
+        type: String,
+        minLength: [3, "min length of color characters is 3"],
+        required: true,
+      },
+      plate: {
+        type: String,
+        minLength: [3, "min length of plate characters is 3"],
+        required: true,
+      },
+      capacity: {
+        type: Number,
+        minLength: [1, "min capacity of vehicle is 1"],
+        required: true,
+      },
+      vehicleType: {
+        type: String,
+        enum: ["car", "motorCycle", "auto"],
+        required: true,
+      },
+    },
     socketId: {
       type: String,
+    },
+    location: {
+      lat: {
+        type: Number,
+      },
+      lng: {
+        type: Number,
+      },
     },
   },
   { timestamps: true }
 );
-
-// Hash password before saving to the database
-userSchema.pre("save", async function (next) {
+captainSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next(); // Skip if password is not modified
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
 // Generate JWT token for the user
-userSchema.methods.generateAccessToken = function () {
+captainSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     { _id: this._id, email: this.email, firstName: this.fullName.firstName },
     process.env.JWTSECRETKEY,
@@ -55,9 +85,8 @@ userSchema.methods.generateAccessToken = function () {
 };
 
 // Compare plain text password with hashed password
-userSchema.methods.comparePassword = async function (password) {
+captainSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-// Export the user model
-export const userModel = mongoose.model("User", userSchema);
+export const captainModel = mongoose.model("captain", captainSchema);

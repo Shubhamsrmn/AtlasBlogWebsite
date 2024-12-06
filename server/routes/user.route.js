@@ -1,17 +1,17 @@
 // Import required modules
-const express = require("express");
-const { body } = require("express-validator");
+import express from "express";
+import { body } from "express-validator";
 
 // Import controller functions
-const {
+import {
   registerFun,
   loginFun,
   getProfileFun,
   logoutFun,
-} = require("../controllers/user.controller");
+} from "../controllers/user.controller.js";
 
 // Import authentication middleware
-const { authUser } = require("../middlewares/auth.middleware");
+import { authUser } from "../middlewares/auth.middleware.js";
 
 // Initialize router
 const router = express.Router();
@@ -56,4 +56,4 @@ router.get("/logout", logoutFun);
 router.get("/profile", getProfileFun);
 
 // Export router
-module.exports = router;
+export default router;
